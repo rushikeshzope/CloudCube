@@ -1,0 +1,116 @@
+/* Main container */
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #87CEEB; /* Sky blue background */
+  overflow: hidden;
+  position: relative;
+}
+
+/* Cloud styling using CSS */
+.cloud {
+  width: 120px;
+  height: 70px;
+  background: #fff;
+  border-radius: 100px;
+  position: absolute;
+  opacity: 0.8;
+  box-shadow: -30px -30px 60px #fff, 30px 30px 60px #fff;
+}
+
+.cloud:before, .cloud:after {
+  content: '';
+  position: absolute;
+  background: #fff;
+  border-radius: 100px;
+}
+
+.cloud:before {
+  width: 90px;
+  height: 90px;
+  top: -45px;
+  left: 15px;
+}
+
+.cloud:after {
+  width: 60px;
+  height: 60px;
+  top: -25px;
+  left: 65px;
+}
+
+/* Sign up box */
+.signup-box {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 400px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Header of the sign-up page */
+.signup-header {
+  margin-bottom: 20px;
+}
+
+.signup-header h1 {
+  font-size: 28px;
+  color: #008CAA;
+}
+
+.signup-header p {
+  font-size: 14px;
+  color: #6E6E6E;
+  margin-bottom: 20px;
+}
+
+/* Form styling */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.signup-form input {
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #DADADA;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.signup-button {
+  background-color: #008CAA;
+  color: white;
+  font-size: 16px;
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.signup-button:hover {
+  background-color: #00A4C1;
+  transform: scale(1.05);
+}
+
+/* Sign-in link */
+.signin-link {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #6E6E6E;
+}
+
+.signin-link a {
+  color: #008CAA;
+  text-decoration: none;
+}
+
+.signin-link a:hover {
+  text-decoration: underline;
+}

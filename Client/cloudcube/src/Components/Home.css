@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Kadwa:wght@400;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Kadwa';
+}
+
+body, html {
+  overflow: hidden;
+}
+
+body {
+  background: #008CAA;
+}
+
+span {
+  color: #00CCDD;
+}
+
+.p1, .p2 {
+  color: #fff;
+}
+
+.p1 {
+  font-size: 58px;
+  text-shadow: 2px 2px #fff;
+}
+
+.p2 {
+  font-size: 35px;
+}
+
+.started {
+  border: 1px solid #fff;
+  color: #fff;
+  background: #008CAA;
+  margin-top: 2vh;
+  font-size: 30px;
+  height: 60px;
+  cursor: pointer;
+  width: 250px;
+  transition: all 0.3s ease-in-out;
+}
+
+.started:hover {
+  background: #fff;
+  color: #008CAA;
+}
+
+.landing {
+  display: block;
+  text-align: center;
+  margin-top: 8vh;
+}
+
+.line {
+  margin-top: 12vh;
+}
+
+.divider {
+  color: #fff;
+}
+
+.database {
+  margin-top: 5vh;
+  margin-right: 2vw;
+}
+
+.animation {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 3vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.marquee {
+  display: flex;
+  justify-content: space-evenly;
+  width: 200%; /* Ensures enough space for both sets of images */
+  animation: marquee 6s linear infinite;
+}
+
+.marquee img {
+  margin-right: 155px;
+  flex-shrink: 0; /* Prevents images from shrinking */
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0); /* Starts from the beginning */
+  }
+  100% {
+    transform: translateX(-50%); /* Moves the entire width of the first set of images */
+  }
+}
+
+.logo-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.login-options {
+  display: flex;
+  margin-top: 5vh;
+  margin-left: -8vw;
+  justify-content: center;
+  align-items: start;
+  gap: 2vw;
+  color: #3E3E3E;
+}
+
+.signup, .signin {
+  position: relative;
+  display: inline-block;
+  padding: 10px 30px;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.signup::before, .signin::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid #fff;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  z-index: -1;
+}
+
+.signup:hover, .signin:hover {
+  color: #008CAA;
+}
+
+.signup:hover::before, .signin:hover::before {
+  background-color: #fff;
+}
