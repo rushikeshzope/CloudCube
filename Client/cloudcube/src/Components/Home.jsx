@@ -31,6 +31,7 @@ function Home() {
       </div>
       <div className="landing">
         <h1 className='p1'><span>WELCOME TO</span> CLOUD<span>CUBE</span></h1>
+        <Link to="/aboutUs"><h3 className='signup'>About Us</h3></Link>
         <h2 className='p2'>YOUR DATA, YOUR WAY <br />BUILD YOUR OWN CLOUD SPACE FOR FREE</h2>
         <Link to="/dashboard"><button className='started'>GET STARTED</button></Link>
       </div>

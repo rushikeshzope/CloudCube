@@ -1,0 +1,42 @@
+.about-us {
+    font-family: Arial, sans-serif;
+    color: white;
+    line-height: 1.6;
+    background: url('https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8Mnx8fGVufDB8fHx8fA%3D%3D');
+    background-position:bottom;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  header {
+    background: #008CAA;
+    padding: 20px 0;
+    text-align: center;
+  }
+  
+  h1, h2 {
+    margin-bottom: 20px;
+    margin-top: 5px;
+  }
+  
+  .content {
+    background: rgba(1, 0, 0, 0.3);
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+  }
+  
+  ul {
+    padding-left: 20px;
+  }
+  
+  li {
+    margin-bottom: 10px;
+  }

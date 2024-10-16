@@ -13,6 +13,7 @@ body, html {
 
 body {
   background: #008CAA;
+  height: 100vh;
 }
 
 span {
@@ -56,7 +57,7 @@ span {
 }
 
 .line {
-  margin-top: 12vh;
+  margin-top: 5vh;
 }
 
 .divider {
@@ -71,7 +72,7 @@ span {
 .animation {
   display: flex;
   justify-content: space-evenly;
-  margin-top: 3vh;
+  margin-top: 2vh;
   overflow: hidden;
   position: relative;
 }
@@ -79,21 +80,21 @@ span {
 .marquee {
   display: flex;
   justify-content: space-evenly;
-  width: 200%; /* Ensures enough space for both sets of images */
+  width: 200%;
   animation: marquee 6s linear infinite;
 }
 
 .marquee img {
   margin-right: 155px;
-  flex-shrink: 0; /* Prevents images from shrinking */
+  flex-shrink: 0; 
 }
 
 @keyframes marquee {
   0% {
-    transform: translateX(0); /* Starts from the beginning */
+    transform: translateX(0); 
   }
   100% {
-    transform: translateX(-50%); /* Moves the entire width of the first set of images */
+    transform: translateX(-50%); 
   }
 }
 
