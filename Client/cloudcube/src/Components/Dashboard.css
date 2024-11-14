@@ -355,6 +355,76 @@
   font-size: 16px;
 }
 
+/* Add these new styles to your existing CSS */
+
+.file-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 5px 0;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.delete-button, .restore-button, .delete-permanent-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  color: white;
+  transition: background-color 0.2s;
+}
+
+.delete-button:hover {
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+.restore-button {
+  background-color: #4CAF50;
+  margin-right: 10px;
+}
+
+.delete-permanent-button {
+  background-color: #f44336;
+}
+
+.trash-container {
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.trash-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8em;
+}
+
+.original-location {
+  color: #b3e5fc;
+  font-size: 0.9em;
+}
+
+.empty-trash {
+  text-align: center;
+  padding: 20px;
+  color: #b3e5fc;
+}
+
 .file-size, .folder-size {
   font-size: 0.8em;
   color: #b3e5fc;

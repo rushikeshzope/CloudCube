@@ -4,6 +4,7 @@ import Home from './Components/Home';
 import SignUp from './Components/signup';
 import AboutUs from './Components/AboutUs';
 import Dashboard from './Components/Dashboard';
+import Test from './Components/Test';
 import SignIn from './Components/signin'
 import './App.css';
 

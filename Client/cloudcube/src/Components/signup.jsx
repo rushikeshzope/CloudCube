@@ -1,8 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import './signup.css';
 
 function SignUp() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
+
+  const [errors, setErrors] = useState({});
+
+  // Handle input change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  // Form validation
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email address is invalid';
+    }
+    if (!formData.password) newErrors.password = 'Password is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      // Simulate successful sign-up and redirect to the home page
+      console.log('Sign up successful');
+      navigate('/'); // Redirect to home page
+    }
+  };
+
   return (
     <div className="signup-container">
       {/* Larger and more visible Cloud animations */}
@@ -46,10 +86,37 @@ function SignUp() {
           <h1>Create Your CloudCube Account</h1>
           <p>Join the CloudCube community and get access to your personal cloud storage for free!</p>
         </div>
-        <form className="signup-form">
-          <input type="text" placeholder="Name" required />
-          <input type="email" placeholder="Email" required />
-          <input type="password" placeholder="Password" required />
+        <form className="signup-form" onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="name"
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+          />
+          {errors.name && <p className="error-text">{errors.name}</p>}
+
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+          />
+          {errors.email && <p className="error-text">{errors.email}</p>}
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleInputChange}
+            required
+          />
+          {errors.password && <p className="error-text">{errors.password}</p>}
+
           <button type="submit" className="signup-button">Sign Up</button>
         </form>
         <p className="signin-link">

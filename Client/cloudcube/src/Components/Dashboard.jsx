@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Trash2 } from 'lucide-react';
 import './Dashboard.css';
 import photo from '../assets/logo.png';
 import pic from "../assets/folder.png";
-import photo2 from '../assets/cloud.png';
-import photo3 from '../assets/comp.png';
-import photo4 from '../assets/computer.png';
-import photo5 from '../assets/data.png';
-import photo6 from '../assets/multiple.png';
-import photo7 from '../assets/storage.png';
 
 const TOTAL_STORAGE = 10 * 1024 * 1024 * 1024; // 10GB in bytes
 
@@ -17,23 +12,40 @@ const Dashboard = () => {
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [showStorage, setShowStorage] = useState(false);
     const [usedStorage, setUsedStorage] = useState(0);
+    const [trashFiles, setTrashFiles] = useState([]);
+    const [showTrash, setShowTrash] = useState(false);
 
+    // Load folders from localStorage when the component mounts
+    useEffect(() => {
+        const savedFolders = JSON.parse(localStorage.getItem('folders'));
+        if (savedFolders) {
+            setFolders(savedFolders);
+        }
+    }, []);
+
+    // Calculate and set used storage whenever folders or trashFiles change
     useEffect(() => {
         const totalUsedStorage = folders.reduce((total, folder) => {
             return total + folder.files.reduce((folderTotal, file) => folderTotal + file.size, 0);
-        }, 0);
+        }, 0) + trashFiles.reduce((total, file) => total + file.size, 0);
         setUsedStorage(totalUsedStorage);
-    }, [folders]);
+
+        // Save folders to localStorage whenever folders change
+        localStorage.setItem('folders', JSON.stringify(folders));
+    }, [folders, trashFiles]);
 
     const createFolder = () => {
         const folderName = prompt("Enter folder name:");
         if (folderName) {
-            setFolders([...folders, { name: folderName, id: Date.now(), files: [] }]);
+            const newFolders = [...folders, { name: folderName, id: Date.now(), files: [] }];
+            setFolders(newFolders);
+            localStorage.setItem('folders', JSON.stringify(newFolders)); // Save folders to localStorage
         }
     };
 
     const selectFolder = (folderId) => {
         setSelectedFolder(folderId);
+        setShowTrash(false);
     };
 
     const handleFileUpload = async (event) => {
@@ -51,73 +63,109 @@ const Dashboard = () => {
         }
 
         for (const file of uploadedFiles) {
-            const fileReader = new FileReader();
-            fileReader.onload = async () => {
-                const fileContent = fileReader.result;
-                await uploadFileToServer(file.name, fileContent);
-                addFileToFolder(file.name, file.size);
-            };
-            fileReader.readAsDataURL(file); // Read the file as a Data URL (base64)
+            // Simulate file upload and add to folder
+            addFileToFolder(file.name, file.size, Date.now());
         }
+
         setShowUploadModal(false);
     };
 
-    const uploadFileToServer = async (fileName, fileContent) => {
-        const url = 'https://<api-id>.execute-api.<region>.amazonaws.com/dev/';
-
-        const payload = {
-            body: JSON.stringify({
-                fileName: fileName,
-                fileContent: fileContent.split(',')[1], // Get the base64 part
-            }),
-        };
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                console.log('Upload Success:', data);
-            } else {
-                console.error('Upload Error:', data);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
-
-    const addFileToFolder = (fileName, fileSize) => {
+    const addFileToFolder = (fileName, fileSize, fileId) => {
         setFolders(folders.map(folder => {
             if (folder.id === selectedFolder) {
                 return {
                     ...folder,
-                    files: [...folder.files, {
-                        name: fileName,
-                        id: Date.now() + Math.random(),
-                        size: fileSize,
-                    }],
+                    files: [...folder.files, { name: fileName, id: fileId, size: fileSize }],
                 };
             }
             return folder;
         }));
     };
 
-    const toggleStorage = () => {
-        setShowStorage(!showStorage);
+    const deleteFile = (folderId, fileId) => {
+        setFolders(folders.map(folder => {
+            if (folder.id === folderId) {
+                const fileToDelete = folder.files.find(file => file.id === fileId);
+                if (fileToDelete) {
+                    setTrashFiles(prev => [...prev, {
+                        ...fileToDelete,
+                        originalFolderId: folderId,
+                        originalFolderName: folder.name,
+                        deletedAt: new Date().toISOString()
+                    }]);
+                }
+                return {
+                    ...folder,
+                    files: folder.files.filter(file => file.id !== fileId)
+                };
+            }
+            return folder;
+        }));
+    };
+
+    const restoreFile = (fileId) => {
+        const fileToRestore = trashFiles.find(file => file.id === fileId);
+        if (fileToRestore) {
+            const originalFolder = folders.find(f => f.id === fileToRestore.originalFolderId);
+            if (originalFolder) {
+                setFolders(folders.map(folder => {
+                    if (folder.id === fileToRestore.originalFolderId) {
+                        return {
+                            ...folder,
+                            files: [...folder.files, {
+                                name: fileToRestore.name,
+                                id: fileToRestore.id,
+                                size: fileToRestore.size
+                            }]
+                        };
+                    }
+                    return folder;
+                }));
+                setTrashFiles(trashFiles.filter(file => file.id !== fileId));
+            } else {
+                alert("Original folder no longer exists. Creating a new folder for restored file.");
+                const newFolder = {
+                    name: "Restored Files",
+                    id: Date.now(),
+                    files: [{
+                        name: fileToRestore.name,
+                        id: fileToRestore.id,
+                        size: fileToRestore.size
+                    }]
+                };
+                setFolders([...folders, newFolder]);
+                setTrashFiles(trashFiles.filter(file => file.id !== fileId));
+            }
+        }
+    };
+
+    const permanentlyDeleteFile = (fileId) => {
+        if (window.confirm("Are you sure you want to permanently delete this file?")) {
+            setTrashFiles(trashFiles.filter(file => file.id !== fileId));
+        }
+    };
+
+    const deleteFolder = (folderId) => {
+        if (window.confirm("Are you sure you want to delete this folder?")) {
+            const updatedFolders = folders.filter(folder => folder.id !== folderId);
+            setFolders(updatedFolders);
+            localStorage.setItem('folders', JSON.stringify(updatedFolders)); // Save updated folders to localStorage
+        }
+    };
+
+    const toggleTrash = () => {
+        setShowTrash(true);
+        setSelectedFolder(null);
     };
 
     const storagePercentage = (usedStorage / TOTAL_STORAGE) * 100;
     const remainingStorage = TOTAL_STORAGE - usedStorage;
 
+    const getFolderSize = (folder) => {
+        return folder.files.reduce((total, file) => total + file.size, 0);
+    };
+
     return (
-      <>
         <div className="dashboard-container">
             <div className="sidebar">
                 <div className="logo">
@@ -126,15 +174,16 @@ const Dashboard = () => {
                 <ul>
                     <li onClick={createFolder}>Create</li>
                     <li onClick={() => setShowUploadModal(true)}>Upload</li>
-                    <li>Trash</li>
-                    <li onClick={toggleStorage}>Storage</li>
+                    <li onClick={toggleTrash}>Trash</li>
+                    <li onClick={() => setShowStorage(!showStorage)}>Storage</li>
                 </ul>
             </div>
             <div className="main-content">
                 <div className="header">
-                    <h1 className='user-entry'>Hello <span className="username">Aditya</span></h1>
+                    <h1 className="user-entry">Hello <span className="username">Aditya</span></h1>
                     <p>CLOUD UP!</p>
                 </div>
+
                 {showStorage && (
                     <div className="storage-info">
                         <div className="storage-circle" style={{ background: `conic-gradient(#4CAF50 ${storagePercentage}%, #FFF ${storagePercentage}% 100%)` }}>
@@ -146,57 +195,84 @@ const Dashboard = () => {
                         <div className="storage-details">
                             <p>Used: {(usedStorage / 1024 / 1024 / 1024).toFixed(2)} GB</p>
                             <p>Remaining: {(remainingStorage / 1024 / 1024 / 1024).toFixed(2)} GB</p>
+                            <h3>Folder Details</h3>
+                            <ul>
+                                {folders.map(folder => (
+                                    <li key={folder.id}>
+                                        {folder.name} - {getFolderSize(folder) / 1024 / 1024} MB
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
                     </div>
                 )}
-                <div className="file-container">
-                    {folders.map((folder) => (
-                        <div
-                            key={folder.id}
-                            className={`file-item ${selectedFolder === folder.id ? 'selected' : ''}`}
-                            onClick={() => selectFolder(folder.id)}
-                        >
-                            <img src={pic} alt="Folder" />
-                            <p>{folder.name}</p>
-                            <p className="file-count">{folder.files.length} files</p>
+
+                {!showTrash ? (
+                    <>
+                        <div className="file-container">
+                            {folders.map((folder) => (
+                                <div
+                                    key={folder.id}
+                                    className={`file-item ${selectedFolder === folder.id ? 'selected' : ''}`}
+                                    onClick={() => selectFolder(folder.id)}
+                                >
+                                    <img src={pic} alt="Folder" />
+                                    <p>{folder.name}</p>
+                                    <button onClick={() => deleteFolder(folder.id)}>Delete Folder</button>
+                                    <p className="file-count">{folder.files.length} files</p>
+                                </div>
+                            ))}
                         </div>
-                    ))}
-                </div>
-                {selectedFolder !== null && (
-                    <div className="file-list">
-                        <h3>Files in {folders.find(f => f.id === selectedFolder)?.name}</h3>
-                        {folders.find(f => f.id === selectedFolder)?.files.map((file) => (
-                            <div key={file.id} className="file-item">
-                                <img src={pic} alt="File" />
-                                <p>{file.name}</p>
-                                <p className="file-size">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+
+                        {selectedFolder !== null && (
+                            <div className="file-list">
+                                <h3>Files in {folders.find(f => f.id === selectedFolder)?.name}</h3>
+                                {folders.find(f => f.id === selectedFolder)?.files.map((file) => (
+                                    <div key={file.id} className="file-item file-row">
+                                        <div className="file-info">
+                                            <img src={pic} alt="File" />
+                                            <p>{file.name}</p>
+                                            <p className="file-size">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                        </div>
+                                        <button onClick={() => deleteFile(selectedFolder, file.id)}>Delete</button>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        )}
+                    </>
+                ) : (
+                    <div className="trash-list">
+                        <h3>Trash</h3>
+                        {trashFiles.length === 0 ? (
+                            <p>No files in trash.</p>
+                        ) : (
+                            trashFiles.map((file) => (
+                                <div key={file.id} className="file-item file-row">
+                                    <div className="file-info">
+                                        <p>{file.name}</p>
+                                        <p className="file-size">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                        <p className="file-folder">From: {file.originalFolderName}</p>
+                                    </div>
+                                    <button className="restore-button" onClick={() => restoreFile(file.id)}>Restore</button>
+                                    <button className="delete-button" onClick={() => permanentlyDeleteFile(file.id)}>Delete</button>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
+
+                {showUploadModal && (
+                    <div className="upload-modal">
+                        <div className="modal-content">
+                            <h3>Upload Files</h3>
+                            <input type="file" multiple onChange={handleFileUpload} />
+                            <button onClick={() => setShowUploadModal(false)}>Cancel</button>
+                        </div>
                     </div>
                 )}
             </div>
-            <div className="footer-icons">
-                <img src={photo2} alt="Icon1" />
-                <img src={photo3} alt="Icon2" />
-                <img src={photo4} alt="Icon3" />
-                <img src={photo5} alt="Icon4" />
-                <img src={photo6} alt="Icon5" />
-            </div>
-            {showUploadModal && (
-                <div className="upload-modal">
-                    <h3>Upload Files</h3>
-                    <p>Selected Folder: {folders.find(f => f.id === selectedFolder)?.name || "None"}</p>
-                    <input
-                        type="file"
-                        multiple
-                        onChange={handleFileUpload}
-                    />
-                    <button onClick={() => setShowUploadModal(false)}>Cancel</button>
-                </div>
-            )}
         </div>
-      </>
-    )
+    );
 };
 
 export default Dashboard;

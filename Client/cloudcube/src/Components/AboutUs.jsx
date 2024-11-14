@@ -20,7 +20,7 @@ const AboutUs = () => {
             <li>Customizable Cloud Solutions: Build your own cloud space tailored to your unique needs.</li>
             <li>User-Centric Approach: We put you in control, ensuring your data works for you.</li>
             <li>Cutting-Edge Technology: Leveraging the latest in cloud computing to deliver superior performance.</li>
-            <li>Uncompromising Security: Your data's safety is our top priority.</li>
+            <li>Uncompromising Security: Your data safety is our top priority.</li>
             <li>Scalability: Grow your cloud space as your needs evolve, without limitations.</li>
           </ul>
           

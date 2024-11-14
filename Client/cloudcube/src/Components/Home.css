@@ -69,6 +69,10 @@ span {
   margin-right: 2vw;
 }
 
+#aboutus{
+  margin-top: 10%;
+}
+
 .animation {
   display: flex;
   justify-content: space-evenly;
